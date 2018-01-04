@@ -62,17 +62,14 @@
 		<!--登录-->
 		<div class="login-dom login-max">
 			<div class="logo text-center">
-				<a href="javascript:void(0)"> <img src="locallib/login/img/logo.png"
-					width="180px" height="180px" />
 				</a>
 			</div>
-			<div class="login container " id="login">
-				<p class="text-big text-center logo-color">同一个账号，连接一切</p>
-
+			<div class="login container " id="login"> 
+				<p class="text-center" style="font-size:28px;color:white">SSM通用后台管理系统</p>
+				<br>
 				<p class="text-center margin-small-top logo-color text-small">
-					SuperUI框架</p>
-				<form class="login-form" action="/admin/index_iframe.html"
-					method="get" autocomplete="off">
+					DFYOI-ADMIN</p>
+				<form class="login-form" method="get" autocomplete="off">
 					<div class="login-box border text-small" id="box">
 						<div class="name border-bottom">
 							<input type="text" placeholder="请输入账号/手机号/邮箱" id="u"
@@ -94,9 +91,8 @@
 		</div>
 		
 		<div class="footer text-center text-small ie">
-			Copyright 2013-2016 版权所有 ©tzhsweet 2015-2018 <a href="#"
-				target="_blank">粤ICP备16024545号-1</a> <span
-				class="margin-left margin-right">|</span>
+			Copyright 2017-2018 版权所有 ©shenhui_email@163.com <a href="#"
+				target="_blank">邯ICP备16024545号-1</a>
 		</div>
 	</div>
 </body>
