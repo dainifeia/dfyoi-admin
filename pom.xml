@@ -48,7 +48,7 @@
 		<jsonlib.version>2.4</jsonlib.version>
 		<gson.version>2.8.2</gson.version>
 		<httpclient.version>4.5.4</httpclient.version>
-		<developer.organization><![CDATA[北京盛世政通软件发展有限公司]]></developer.organization>
+		<developer.organization><![CDATA[不忘初心，方得始终]]></developer.organization>
 	</properties>
 	<dependencies>
 		<dependency>
