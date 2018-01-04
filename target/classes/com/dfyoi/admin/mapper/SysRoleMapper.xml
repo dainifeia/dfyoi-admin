@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dfyoi.admin.mapper.SysRoleMapper">
+	<resultMap id="BaseResultMap" type="com.dfyoi.admin.pojo.SysRole">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="sym" property="sym" jdbcType="VARCHAR" />
+		<result column="orderNumber" property="orderNumber" jdbcType="INTEGER" />
+		<result column="descr" property="descr" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, name, sym,orderNumber, descr
+	</sql>
+	<select id="getRoleById" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from sysrole
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<select id="getRoleBySym" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from sysrole
+		where sym = #{sym,jdbcType=VARCHAR}
+	</select>
+	<select id="getRoleMoveUp" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from sysrole
+		where <![CDATA[orderNumber < #{orderNumber,jdbcType=INTEGER}]]>
+		order by orderNumber desc limit 1
+	</select>
+	<select id="getRoleMoveDown" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from sysrole
+		where <![CDATA[orderNumber > #{orderNumber,jdbcType=INTEGER}]]>
+		order by orderNumber asc limit 1
+	</select>
+	<delete id="removeById">
+		delete from sysrole
+		where id = #{id,jdbcType=INTEGER};
+		update sysrole set orderNumber=orderNumber-1 where <![CDATA[orderNumber >#{orderNumber,jdbcType=INTEGER}]]>;
+	</delete>
+	<insert id="insert" parameterType="com.dfyoi.admin.pojo.SysRole">
+		insert into sysrole (id, name, sym,orderNumber,
+		descr)
+		values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR},
+		#{sym,jdbcType=VARCHAR}, #{orderNumber,jdbcType=INTEGER},
+		#{descr,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.dfyoi.admin.pojo.SysRole">
+		insert into sysrole
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="name != null">
+				name,
+			</if>
+			<if test="sym != null">
+				sym,
+			</if>
+			<if test="orderNumber != null">
+				orderNumber,
+			</if>
+			<if test="descr != null">
+				descr,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="name != null">
+				#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="sym != null">
+				#{sym,jdbcType=VARCHAR},
+			</if>
+			<if test="orderNumber != null">
+				#{orderNumber,jdbcType=INTEGER},
+			</if>
+			<if test="descr != null">
+				#{descr,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.dfyoi.admin.pojo.SysRole">
+		update sysrole
+		<set>
+			<if test="name != null">
+				name = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="sym != null">
+				sym = #{sym,jdbcType=VARCHAR},
+			</if>
+			<if test="orderNumber != null">
+				orderNumber = #{orderNumber,jdbcType=INTEGER},
+			</if>
+			<if test="descr != null">
+				descr = #{descr,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateById" parameterType="com.dfyoi.admin.pojo.SysRole">
+		update sysrole
+		set name = #{name,jdbcType=VARCHAR},
+		sym = #{sym,jdbcType=VARCHAR},
+		orderNumber = #{orderNumber,jdbcType=INTEGER},
+		descr = #{descr,jdbcType=VARCHAR}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<select id="listByPara" resultMap="BaseResultMap">
+		select * from SysRole
+		<where>
+            <if test="roleName != null and roleName!=''" >
+                name like concat(concat('%',#{roleName}),'%')
+            </if>
+            <if test="roleSym != null and roleSym!=''" >
+                and sym like concat(concat('%',#{roleSym}),'%')
+            </if>
+         </where>
+	</select>
+	<select id="getMaxOrder" resultType="java.lang.Integer">
+		select max(orderNumber) from
+		SysRole
+	</select>
+</mapper>

@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dfyoi.admin.mapper.SysUserMapper">
+	<resultMap id="BaseResultMap" type="SysUser">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="userName" property="userName" jdbcType="VARCHAR" />
+		<result column="userPwd" property="userPwd" jdbcType="VARCHAR" />
+		<result column="roleSym" property="roleSym" jdbcType="VARCHAR" />
+		<result column="roleName" property="roleName" jdbcType="VARCHAR" />
+		<result column="personId" property="personId" jdbcType="INTEGER" />
+		<result column="personName" property="personName" jdbcType="VARCHAR" />
+		<result column="deptId" property="deptId" jdbcType="INTEGER" />
+		<result column="deptName" property="deptName" jdbcType="VARCHAR" />
+		<result column="stts" property="stts" jdbcType="INTEGER" />
+		<result column="descr" property="descr" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, userName, userPwd, roleSym, roleName, personId, personName, deptId,
+		deptName,
+		stts, descr
+	</sql>
+	<select id="getUserById" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from sysuser
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+		<select id="getUserByUserName" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from sysuser
+		where userName = #{userName,jdbcType=VARCHAR}
+	</select>
+		<select id="getUserByPersonId" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from sysuser
+		where personId = #{personId,jdbcType=INTEGER}
+	</select>
+	<delete id="removeById" parameterType="java.lang.Integer">
+		delete from sysuser
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="SysUser">
+		<selectKey resultType="java.lang.Integer" keyProperty="id"
+			order="AFTER">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		insert into sysuser (userName, userPwd, roleSym,
+		roleName, personId, personName,
+		deptId, deptName, stts,
+		descr)
+		values (#{userName,jdbcType=VARCHAR}, #{userPwd,jdbcType=VARCHAR},
+		#{roleSym,jdbcType=VARCHAR},
+		#{roleName,jdbcType=VARCHAR}, #{personId,jdbcType=INTEGER}, #{personName,jdbcType=VARCHAR},
+		#{deptId,jdbcType=INTEGER}, #{deptName,jdbcType=VARCHAR},
+		#{stts,jdbcType=INTEGER},
+		#{descr,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="SysUser">
+		<selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into sysuser
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="userName != null" >
+        userName,
+      </if>
+      <if test="userPwd != null" >
+        userPwd,
+      </if>
+      <if test="roleSym != null" >
+        roleSym,
+      </if>
+      <if test="roleName != null" >
+        roleName,
+      </if>
+      <if test="personId != null" >
+        personId,
+      </if>
+      <if test="personName != null" >
+        personName,
+      </if>
+      <if test="deptId != null" >
+        deptId,
+      </if>
+      <if test="deptName != null" >
+        deptName,
+      </if>
+      <if test="stts != null" >
+        stts,
+      </if>
+      <if test="descr != null" >
+        descr,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="userName != null" >
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="userPwd != null" >
+        #{userPwd,jdbcType=VARCHAR},
+      </if>
+      <if test="roleSym != null" >
+        #{roleSym,jdbcType=VARCHAR},
+      </if>
+      <if test="roleName != null" >
+        #{roleName,jdbcType=VARCHAR},
+      </if>
+      <if test="personId != null" >
+        #{personId,jdbcType=INTEGER},
+      </if>
+      <if test="personName != null" >
+        #{personName,jdbcType=VARCHAR},
+      </if>
+      <if test="deptId != null" >
+        #{deptId,jdbcType=INTEGER},
+      </if>
+      <if test="deptName != null" >
+        #{deptName,jdbcType=VARCHAR},
+      </if>
+      <if test="stts != null" >
+        #{stts,jdbcType=INTEGER},
+      </if>
+      <if test="descr != null" >
+        #{descr,jdbcType=VARCHAR},
+      </if>
+    </trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="SysUser">
+		update sysuser
+    <set >
+      <if test="userName != null" >
+        userName = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="userPwd != null" >
+        userPwd = #{userPwd,jdbcType=VARCHAR},
+      </if>
+      <if test="roleSym != null" >
+        roleSym = #{roleSym,jdbcType=VARCHAR},
+      </if>
+      <if test="roleName != null" >
+        roleName = #{roleName,jdbcType=VARCHAR},
+      </if>
+      <if test="personId != null" >
+        personId = #{personId,jdbcType=INTEGER},
+      </if>
+      <if test="personName != null" >
+        personName = #{personName,jdbcType=VARCHAR},
+      </if>
+      <if test="deptId != null" >
+        deptId = #{deptId,jdbcType=INTEGER},
+      </if>
+      <if test="deptName != null" >
+        deptName = #{deptName,jdbcType=VARCHAR},
+      </if>
+      <if test="stts != null" >
+        stts = #{stts,jdbcType=INTEGER},
+      </if>
+      <if test="descr != null" >
+        descr = #{descr,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateById" parameterType="SysUser">
+		update sysuser
+    set userName = #{userName,jdbcType=VARCHAR},
+      userPwd = #{userPwd,jdbcType=VARCHAR},
+      roleSym = #{roleSym,jdbcType=VARCHAR},
+      roleName = #{roleName,jdbcType=VARCHAR},
+      personId = #{personId,jdbcType=INTEGER},
+      personName = #{personName,jdbcType=VARCHAR},
+      deptId = #{deptId,jdbcType=INTEGER},
+      deptName = #{deptName,jdbcType=VARCHAR},
+      stts = #{stts,jdbcType=INTEGER},
+      descr = #{descr,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+	</update>
+	<select id="listByPara" resultMap="BaseResultMap">
+		select * from SysUser
+		<where>
+			<if test="deptId != null and deptId!=0">
+				deptId=#{deptId}
+			</if>
+			<if test="personName != null and personName!=''">
+				and personName like concat(concat('%',#{personName}),'%')
+			</if>
+			<if test="userName != null and userName!=''">
+				and userName like concat(concat('%',#{userName}),'%')
+			</if>
+		</where>
+		order by id
+	</select>
+	<select id="login" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from sysUser
+		where userName = #{userName,jdbcType=VARCHAR} and userPwd = #{userPwd,jdbcType=VARCHAR} 
+	</select>
+</mapper>

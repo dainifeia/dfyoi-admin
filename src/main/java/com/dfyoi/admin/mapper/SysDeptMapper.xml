@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dfyoi.admin.mapper.SysDeptMapper">
+	<resultMap id="BaseResultMap" type="SysDept">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="fullName" property="fullname" jdbcType="VARCHAR" />
+		<result column="contactPerson" property="contactPerson"
+			jdbcType="VARCHAR" />
+		<result column="contactTel" property="contactTel" jdbcType="VARCHAR" />
+		<result column="address" property="address" jdbcType="VARCHAR" />
+		<result column="descr" property="descr" jdbcType="VARCHAR" />
+		<result column="orderNumber" property="ordernumber" jdbcType="INTEGER" />
+		<result column="lft" property="lft" jdbcType="INTEGER" />
+		<result column="rgt" property="rgt" jdbcType="INTEGER" />
+		<result column="level" property="level" jdbcType="INTEGER" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, name, fullName, contactPerson, contactTel, address,
+		descr,
+		orderNumber, lft,
+		rgt, level
+	</sql>
+	<select id="getDeptById" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from sysdept
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<select id="getParentDept" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from sysdept
+		where <![CDATA[level = #{level,jdbcType=INTEGER} and lft<#{lft,jdbcType=INTEGER} and rgt>#{rgt,jdbcType=INTEGER}]]>
+	</select>
+
+	<select id="getDeptMoveUp" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from sysdept
+		where <![CDATA[level = #{level,jdbcType=INTEGER} and lft<#{lft,jdbcType=INTEGER}]]>
+		and lft&gt;#{plft,jdbcType=INTEGER}
+		and rgt&lt;#{prgt,jdbcType=INTEGER}
+		order by lft desc limit 1
+	</select>
+	<select id="getDeptMoveDown" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from sysdept
+		where <![CDATA[level = #{level,jdbcType=INTEGER} and lft>#{lft,jdbcType=INTEGER}]]>
+		and lft&gt;#{plft,jdbcType=INTEGER}
+		<if test="level ==0">
+			and rgt&gt;#{prgt,jdbcType=INTEGER}
+		</if>
+		<if test="level !=0">
+			and rgt&lt;#{prgt,jdbcType=INTEGER}
+		</if>
+		order by lft asc limit 1
+	</select>
+	<delete id="removeById" parameterType="java.lang.Integer">
+		delete from sysdept
+		where
+		id = #{id,jdbcType=INTEGER}
+	</delete>
+	<delete id="removeAndChild">
+		delete from sysdept where <![CDATA[lft>=#{lft,jdbcType=INTEGER} and rgt<=#{rgt,jdbcType=INTEGER}]]>;
+		update sysdept set
+		lft=lft-(#{rgt,jdbcType=INTEGER}-#{lft,jdbcType=INTEGER}+1) where <![CDATA[lft>#{lft,jdbcType=INTEGER}]]>;
+		update sysdept set
+		rgt=rgt-(#{rgt,jdbcType=INTEGER}-#{lft,jdbcType=INTEGER}+1) where <![CDATA[rgt>#{rgt,jdbcType=INTEGER}]]>;
+	</delete>
+	<update id="beforInsert">
+		update sysdept set rgt = rgt + 2 where <![CDATA[ rgt >= #{rgt,jdbcType=INTEGER} ]]>;
+		update sysdept set lft = lft + 2 where <![CDATA[ lft >= #{rgt,jdbcType=INTEGER} ]]>;
+	</update>
+
+	<insert id="insert" parameterType="SysDept">
+		insert into sysdept (id,
+		name,fullName,
+		contactPerson, contactTel, address,
+		descr, orderNumber,
+		lft, rgt, level
+		)
+		values (#{id,jdbcType=INTEGER},
+		#{name,jdbcType=VARCHAR},
+		#{fullname,jdbcType=VARCHAR},
+		#{contactPerson,jdbcType=VARCHAR},
+		#{contactTel,jdbcType=VARCHAR},
+		#{address,jdbcType=VARCHAR},
+		#{descr,jdbcType=VARCHAR},
+		#{ordernumber,jdbcType=INTEGER},
+		#{lft,jdbcType=INTEGER},
+		#{rgt,jdbcType=INTEGER},
+		#{level,jdbcType=INTEGER}
+		)
+	</insert>
+	<insert id="insertSelective" parameterType="SysDept">
+		insert into sysdept
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="name != null">
+				name,
+			</if>
+			<if test="fullname != null">
+				fullName,
+			</if>
+			<if test="contactPerson != null">
+				contactPerson,
+			</if>
+			<if test="contactTel != null">
+				contactTel,
+			</if>
+			<if test="address != null">
+				address,
+			</if>
+			<if test="descr != null">
+				descr,
+			</if>
+			<if test="ordernumber != null">
+				orderNumber,
+			</if>
+			<if test="lft != null">
+				lft,
+			</if>
+			<if test="rgt != null">
+				rgt,
+			</if>
+			<if test="level != null">
+				level,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="name != null">
+				#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="fullname != null">
+				#{fullname,jdbcType=VARCHAR},
+			</if>
+			<if test="contactPerson != null">
+				#{contactperson,jdbcType=VARCHAR},
+			</if>
+			<if test="contactTel != null">
+				#{contacttel,jdbcType=VARCHAR},
+			</if>
+			<if test="address != null">
+				#{address,jdbcType=VARCHAR},
+			</if>
+			<if test="descr != null">
+				#{descr,jdbcType=VARCHAR},
+			</if>
+			<if test="ordernumber != null">
+				#{ordernumber,jdbcType=INTEGER},
+			</if>
+			<if test="lft != null">
+				#{lft,jdbcType=INTEGER},
+			</if>
+			<if test="rgt != null">
+				#{rgt,jdbcType=INTEGER},
+			</if>
+			<if test="level != null">
+				#{level,jdbcType=INTEGER},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="SysDept">
+		update sysdept
+		<set>
+			<if test="name != null">
+				name = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="fullname != null">
+				fullName = #{fullname,jdbcType=VARCHAR},
+			</if>
+			<if test="contactPerson != null">
+				contactPerson = #{contactperson,jdbcType=VARCHAR},
+			</if>
+			<if test="contactTel != null">
+				contactTel = #{contacttel,jdbcType=VARCHAR},
+			</if>
+			<if test="address != null">
+				address = #{address,jdbcType=VARCHAR},
+			</if>
+			<if test="descr != null">
+				descr = #{descr,jdbcType=VARCHAR},
+			</if>
+			<if test="ordernumber != null">
+				orderNumber = #{ordernumber,jdbcType=INTEGER},
+			</if>
+			<if test="lft != null">
+				lft = #{lft,jdbcType=INTEGER},
+			</if>
+			<if test="rgt != null">
+				rgt = #{rgt,jdbcType=INTEGER},
+			</if>
+			<if test="level != null">
+				level = #{level,jdbcType=INTEGER},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateById" parameterType="SysDept">
+		update sysdept
+		set name =
+		#{name,jdbcType=VARCHAR},
+		fullName = #{fullname,jdbcType=VARCHAR},
+		contactPerson = #{contactPerson,jdbcType=VARCHAR},
+		contactTel =
+		#{contactTel,jdbcType=VARCHAR},
+		address = #{address,jdbcType=VARCHAR},
+		descr = #{descr,jdbcType=VARCHAR},
+		orderNumber =
+		#{ordernumber,jdbcType=INTEGER},
+		lft = #{lft,jdbcType=INTEGER},
+		rgt =
+		#{rgt,jdbcType=INTEGER},
+		level = #{level,jdbcType=INTEGER}
+		where id =
+		#{id,jdbcType=INTEGER}
+	</update>
+	<select id="listDescendant" resultMap="BaseResultMap">
+		select * from SysDept where
+		<![CDATA[ lft> #{lft,jdbcType=INTEGER} and rgt< #{rgt,jdbcType=INTEGER} order by
+		lft]]>
+	</select>
+	<select id="listAll" resultMap="BaseResultMap">
+		select * from SysDept order by
+		lft
+	</select>
+	<select id="getMaxRgt" resultType="java.lang.Integer">
+		select max(rgt) from SysDept
+	</select>
+</mapper>

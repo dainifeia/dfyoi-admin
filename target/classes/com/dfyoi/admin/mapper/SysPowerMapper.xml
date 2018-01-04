@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dfyoi.admin.mapper.SysPowerMapper">
+	<resultMap id="BaseResultMap" type="SysPower">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="sym" property="sym" jdbcType="VARCHAR" />
+		<result column="powerType" property="powerType" jdbcType="INTEGER" />
+		<result column="url" property="url" jdbcType="VARCHAR" />
+		<result column="icon" property="icon" jdbcType="VARCHAR" />
+		<result column="openType" property="openType" jdbcType="INTEGER" />
+		<result column="stts" property="stts" jdbcType="INTEGER" />
+		<result column="descr" property="descr" jdbcType="VARCHAR" />
+		<result column="lft" property="lft" jdbcType="INTEGER" />
+		<result column="rgt" property="rgt" jdbcType="INTEGER" />
+		<result column="level" property="level" jdbcType="INTEGER" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, name, sym, powerType, url, icon, openType, stts, descr,
+		lft, rgt,
+		level
+	</sql>
+	<select id="getPowerById" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from syspower
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<select id="getParentPower" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from syspower
+		where <![CDATA[level = #{level,jdbcType=INTEGER} and lft<#{lft,jdbcType=INTEGER} and rgt>#{rgt,jdbcType=INTEGER}]]>
+	</select>
+	<select id="getPowerBySym" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from syspower
+		where sym = #{sym,jdbcType=VARCHAR}
+	</select>
+	<select id="getPowerMoveUp" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from syspower
+		where <![CDATA[level = #{level,jdbcType=INTEGER} and lft<#{lft,jdbcType=INTEGER}]]>
+		and lft&gt;#{plft,jdbcType=INTEGER}
+		and rgt&lt;#{prgt,jdbcType=INTEGER}
+		order by lft desc limit 1
+	</select>
+	<select id="getPowerMoveDown" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from syspower
+		where <![CDATA[level = #{level,jdbcType=INTEGER} and lft>#{lft,jdbcType=INTEGER}]]>
+		and lft&gt;#{plft,jdbcType=INTEGER}
+		<if test="level ==0">
+			and rgt&gt;#{prgt,jdbcType=INTEGER}
+		</if>
+		<if test="level !=0">
+			and rgt&lt;#{prgt,jdbcType=INTEGER}
+		</if>
+		order by lft asc limit 1
+	</select>
+
+	<delete id="removeById" parameterType="java.lang.Integer">
+		delete from syspower
+		where
+		id = #{id,jdbcType=INTEGER}
+	</delete>
+	<delete id="removeAndChild">
+		delete from syspower where <![CDATA[lft>=#{lft,jdbcType=INTEGER} and rgt<=#{rgt,jdbcType=INTEGER}]]>;
+		update syspower set
+		lft=lft-(#{rgt,jdbcType=INTEGER}-#{lft,jdbcType=INTEGER}+1) where <![CDATA[lft>#{lft,jdbcType=INTEGER}]]>;
+		update syspower set
+		rgt=rgt-(#{rgt,jdbcType=INTEGER}-#{lft,jdbcType=INTEGER}+1) where <![CDATA[rgt>#{rgt,jdbcType=INTEGER}]]>;
+	</delete>
+	<update id="beforInsert">
+		update syspower set rgt = rgt + 2 where <![CDATA[ rgt >= #{rgt,jdbcType=INTEGER} ]]>;
+		update syspower set lft = lft + 2 where <![CDATA[ lft >= #{rgt,jdbcType=INTEGER} ]]>;
+	</update>
+	<insert id="insert" parameterType="SysPower">
+		insert into syspower (id,
+		name, sym,
+		powerType, url, icon,
+		openType, stts, descr,
+		lft, rgt, level)
+		values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR},
+		#{sym,jdbcType=VARCHAR},
+		#{powerType,jdbcType=INTEGER},
+		#{url,jdbcType=VARCHAR}, #{icon,jdbcType=VARCHAR},
+		#{openType,jdbcType=INTEGER}, #{stts,jdbcType=INTEGER},
+		#{descr,jdbcType=VARCHAR},
+		#{lft,jdbcType=INTEGER},
+		#{rgt,jdbcType=INTEGER}, #{level,jdbcType=INTEGER})
+	</insert>
+	<insert id="insertSelective" parameterType="SysPower">
+		insert into syspower
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="name != null">
+				name,
+			</if>
+			<if test="sym != null">
+				sym,
+			</if>
+			<if test="powerType != null">
+				powerType,
+			</if>
+			<if test="url != null">
+				url,
+			</if>
+			<if test="icon != null">
+				icon,
+			</if>
+			<if test="openType != null">
+				openType,
+			</if>
+			<if test="stts != null">
+				stts,
+			</if>
+			<if test="descr != null">
+				descr,
+			</if>
+			<if test="lft != null">
+				lft,
+			</if>
+			<if test="rgt != null">
+				rgt,
+			</if>
+			<if test="level != null">
+				level,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="name != null">
+				#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="sym != null">
+				#{sym,jdbcType=VARCHAR},
+			</if>
+			<if test="powerType != null">
+				#{powerType,jdbcType=INTEGER},
+			</if>
+			<if test="url != null">
+				#{url,jdbcType=VARCHAR},
+			</if>
+			<if test="icon != null">
+				#{icon,jdbcType=VARCHAR},
+			</if>
+			<if test="openType != null">
+				#{openType,jdbcType=INTEGER},
+			</if>
+			<if test="stts != null">
+				#{stts,jdbcType=INTEGER},
+			</if>
+			<if test="descr != null">
+				#{descr,jdbcType=VARCHAR},
+			</if>
+			<if test="lft != null">
+				#{lft,jdbcType=INTEGER},
+			</if>
+			<if test="rgt != null">
+				#{rgt,jdbcType=INTEGER},
+			</if>
+			<if test="level != null">
+				#{level,jdbcType=INTEGER},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="SysPower">
+		update syspower
+		<set>
+			<if test="name != null">
+				name = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="sym != null">
+				sym = #{sym,jdbcType=VARCHAR},
+			</if>
+			<if test="powerType != null">
+				powerType = #{powerType,jdbcType=INTEGER},
+			</if>
+			<if test="url != null">
+				url = #{url,jdbcType=VARCHAR},
+			</if>
+			<if test="icon != null">
+				icon = #{icon,jdbcType=VARCHAR},
+			</if>
+			<if test="openType != null">
+				openType = #{openType,jdbcType=INTEGER},
+			</if>
+			<if test="stts != null">
+				stts = #{stts,jdbcType=INTEGER},
+			</if>
+			<if test="descr != null">
+				descr = #{descr,jdbcType=VARCHAR},
+			</if>
+			<if test="lft != null">
+				lft = #{lft,jdbcType=INTEGER},
+			</if>
+			<if test="rgt != null">
+				rgt = #{rgt,jdbcType=INTEGER},
+			</if>
+			<if test="level != null">
+				level = #{level,jdbcType=INTEGER},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateById" parameterType="SysPower">
+		update syspower
+		set name =
+		#{name,jdbcType=VARCHAR},
+		sym = #{sym,jdbcType=VARCHAR},
+		powerType =
+		#{powerType,jdbcType=INTEGER},
+		url = #{url,jdbcType=VARCHAR},
+		icon =
+		#{icon,jdbcType=VARCHAR},
+		openType = #{openType,jdbcType=INTEGER},
+		stts
+		= #{stts,jdbcType=INTEGER},
+		descr = #{descr,jdbcType=VARCHAR},
+		lft =
+		#{lft,jdbcType=INTEGER},
+		rgt = #{rgt,jdbcType=INTEGER},
+		level =
+		#{level,jdbcType=INTEGER}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<select id="listDescendant" resultMap="BaseResultMap">
+		select * from SysPower where
+		<![CDATA[ lft> #{lft,jdbcType=INTEGER} and rgt< #{rgt,jdbcType=INTEGER} order by
+		lft]]>
+	</select>
+	<select id="listAll" resultMap="BaseResultMap">
+		select
+		id,name,sym,powerType,openType,lft,rgt,level from SysPower order by
+		lft
+	</select>
+	<select id="getMaxRgt" resultType="java.lang.Integer">
+		select max(rgt) from SysPower
+	</select>
+	<select id="listPowerByRoleSym" resultMap="BaseResultMap">
+		select * from syspower
+		where powerType=#{powerType,jdbcType=INTEGER} and sym in (select
+		powerSym from sysRolePower where roleSym=#{roleSym,jdbcType=VARCHAR})
+		order by lft
+	</select>
+</mapper>

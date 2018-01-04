@@ -1,0 +1,290 @@
+package com.sszt.hotline.controller;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.http.client.ClientProtocolException;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
+
+import com.sszt.core.baseclass.BaseController;
+import com.sszt.core.baseclass.QueryResult;
+import com.sszt.hotline.entity.WxHelp;
+import com.sszt.hotline.service.WxHelpService;
+import com.sszt.hotline.utils.DateStrUtil;
+import com.sszt.wechat.Constants;
+import com.sszt.wechat.OAuthInfo;
+import com.sszt.wechat.WeixinUtil;
+
+/**   
+  *Copyright ©shenhui 2017. All rights reserved.
+  *@author  申辉
+  *E-mail: shenhui_email@163.com
+  *@date 创建时间：2017年8月10日 下午7:27:45
+  *@version 1.0
+  *@see reference
+*/
+@Controller
+@RequestMapping("/wechat")
+public class WeChatController extends BaseController {
+    @Resource
+    private WxHelpService wxHelpService;
+
+    //投诉页面
+    @RequestMapping("/complaint")
+    public ModelAndView complaint(HttpServletRequest request) {
+        String url = request.getScheme() + "://" + request.getServerName() + "/wechat/complaint";
+        System.out.println(url);
+
+        ModelAndView mView = new ModelAndView("/wechat/complaint");
+        //参数
+        String code = request.getParameter("code");
+        //如果code不为空则代表是微信重定向进入
+        if (code != null && code.equals("") == false) {
+            System.out.print("==============[OAuthServlet]获取网页授权code不为空，code=" + code);
+            //根据code换取openId
+            OAuthInfo oauthInfo = WeixinUtil.getOAuthOpenId(code);
+            //获取信息
+            if (oauthInfo != null) {
+                request.getSession().setAttribute("openid", oauthInfo.getOpenId());
+            }
+        } else {
+            String openid = getOpenId(request);
+            if (openid.equals("")) {
+                //code为空代表非微信重定向进入
+                String getCodeUrl = WeixinUtil.getCodeUrl(url);
+                return new ModelAndView(new RedirectView(getCodeUrl));
+            }
+        }
+        WxHelp wxHelp = new WxHelp();
+        mView.addObject("o", wxHelp);
+        return mView;
+    }
+
+    //咨询页面
+    @RequestMapping("/consultation")
+    public ModelAndView consultation() {
+        String url = request.getScheme() + "://" + request.getServerName() + "/wechat/consultation";
+        System.out.println(url);
+
+        ModelAndView mView = new ModelAndView("/wechat/consultation");
+        //参数
+        String code = request.getParameter("code");
+        //如果code不为空则代表是微信重定向进入
+        if (code != null && code.equals("") == false) {
+            System.out.print("==============[OAuthServlet]获取网页授权code不为空，code=" + code);
+            //根据code换取openId
+            OAuthInfo oauthInfo = WeixinUtil.getOAuthOpenId(code);
+            //获取信息
+            if (oauthInfo != null) {
+                request.getSession().setAttribute("openid", oauthInfo.getOpenId());
+            }
+        } else {
+            String openid = getOpenId(request);
+            if (openid.equals("")) {
+                //code为空代表非微信重定向进入
+                String getCodeUrl = WeixinUtil.getCodeUrl(url);
+                return new ModelAndView(new RedirectView(getCodeUrl));
+            }
+        }
+        WxHelp wxHelp = new WxHelp();
+        mView.addObject("o", wxHelp);
+        return mView;
+    }
+
+    //我要查询页面
+    @RequestMapping("/searchMyEvent")
+    public ModelAndView SearchMyEvent() {
+        String url = request.getScheme() + "://" + request.getServerName() + "/wechat/searchMyEvent";
+        System.out.println(url);
+
+        ModelAndView mView = new ModelAndView("/wechat/searchMyEvent");
+        //参数
+        String code = request.getParameter("code");
+        //如果code不为空则代表是微信重定向进入
+        if (code != null && code.equals("") == false) {
+            System.out.print("==============[OAuthServlet]获取网页授权code不为空，code=" + code);
+            //根据code换取openId
+            OAuthInfo oauthInfo = WeixinUtil.getOAuthOpenId(code);
+            //获取信息
+            if (oauthInfo != null) {
+                request.getSession().setAttribute("openid", oauthInfo.getOpenId());
+            }
+        } else {
+            String openid = getOpenId(request);
+            if (openid.equals("")) {
+                //code为空代表非微信重定向进入
+                String getCodeUrl = WeixinUtil.getCodeUrl(url);
+                return new ModelAndView(new RedirectView(getCodeUrl));
+            }
+        }
+        return mView;
+    }
+
+    //事件的详细页面
+    @RequestMapping("/eventInfo")
+    public ModelAndView eventInfo() {
+        String url = request.getScheme() + "://" + request.getServerName() + "/wechat/eventInfo?id="
+                + request.getParameter("id");
+        System.out.println(url);
+        WxHelp wxHelp = new WxHelp();
+        ModelAndView mView = new ModelAndView("/wechat/eventInfo");
+        //参数
+        String code = request.getParameter("code");
+        //如果code不为空则代表是微信重定向进入
+        if (code != null && code.equals("") == false) {
+            System.out.print("==============[OAuthServlet]获取网页授权code不为空，code=" + code);
+            //根据code换取openId
+            OAuthInfo oauthInfo = WeixinUtil.getOAuthOpenId(code);
+            //获取信息
+            if (oauthInfo != null) {
+                request.getSession().setAttribute("openid", oauthInfo.getOpenId());
+                wxHelp = wxHelpService.dtl(Integer.valueOf(request.getParameter("id")));
+            }
+        } else {
+            String openid = getOpenId(request);
+            if (openid.equals("")) {
+                //code为空代表非微信重定向进入
+                String getCodeUrl = WeixinUtil.getCodeUrl(url);
+                return new ModelAndView(new RedirectView(getCodeUrl));
+            } else {
+                wxHelp = wxHelpService.dtl(Integer.valueOf(request.getParameter("id")));
+            }
+        }
+
+        mView.addObject("o", wxHelp);
+        return mView;
+    }
+
+    //提交成功页面
+    @RequestMapping("/successmsg")
+    public ModelAndView successmsg() throws ClientProtocolException, IOException {
+        ModelAndView mView = new ModelAndView("/wechat/successmsg");
+        String nonce_str = WeixinUtil.create_nonce_str();
+        String timestamp = WeixinUtil.create_timestamp();
+        //String url = request.getScheme() + "://" + request.getServerName() + "/wechat/successmsg";
+        String url = request.getRequestURL().toString();
+        System.out.print("--------------获取jsapi权限的URL" + url);
+        String jsapi_ticket = WeixinUtil.getJsApiTicket(WeixinUtil.getAccess_token());
+        System.out.print("--------------jsapi_ticket" + jsapi_ticket);
+        String signature = "";
+        // 注意这里参数名必须全部小写，且必须有序
+        String str = "jsapi_ticket=" + jsapi_ticket + "&noncestr=" + nonce_str + "&timestamp=" + timestamp + "&url="
+                + url;
+        try {
+            MessageDigest crypt = MessageDigest.getInstance("SHA-1");
+            crypt.reset();
+            crypt.update(str.getBytes("UTF-8"));
+            signature = WeixinUtil.byteToHex(crypt.digest());
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        request.setAttribute("appid", Constants.APPID);
+        request.setAttribute("timestamp", timestamp);
+        request.setAttribute("nonce_str", nonce_str);
+        request.setAttribute("signature", signature);
+        return mView;
+    }
+
+    //提交失败页面
+    @RequestMapping("/faildmsg")
+    public ModelAndView faildmsg() throws ClientProtocolException, IOException {
+        ModelAndView mView = new ModelAndView("/wechat/faildmsg");
+        String nonce_str = WeixinUtil.create_nonce_str();
+        String timestamp = WeixinUtil.create_timestamp();
+        //String url = request.getScheme() + "://" + request.getServerName() + "/wechat/successmsg";
+        String url = request.getRequestURL().toString();
+        System.out.print("--------------获取jsapi权限的URL" + url);
+        String jsapi_ticket = WeixinUtil.getJsApiTicket(WeixinUtil.getAccess_token());
+        System.out.print("--------------jsapi_ticket" + jsapi_ticket);
+        String signature = "";
+        // 注意这里参数名必须全部小写，且必须有序
+        String str = "jsapi_ticket=" + jsapi_ticket + "&noncestr=" + nonce_str + "&timestamp=" + timestamp + "&url="
+                + url;
+        try {
+            MessageDigest crypt = MessageDigest.getInstance("SHA-1");
+            crypt.reset();
+            crypt.update(str.getBytes("UTF-8"));
+            signature = WeixinUtil.byteToHex(crypt.digest());
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        request.setAttribute("appid", Constants.APPID);
+        request.setAttribute("timestamp", timestamp);
+        request.setAttribute("nonce_str", nonce_str);
+        request.setAttribute("signature", signature);
+        return mView;
+    }
+
+    /**
+     * 执行添加或修改
+     * @param request
+     * @param wxHelp
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/save", method = RequestMethod.POST)
+    public Map<String, Object> save(WxHelp wxHelp) {
+        String msg = "提交成功";
+        boolean success = true;
+        Map<String, Object> map = new HashMap<String, Object>();
+        try {
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            wxHelp.setCreateDate(format.parse(DateStrUtil.getDateNow("yyyy-MM-dd HH:mm:ss")));
+            wxHelpService.save(wxHelp);
+        } catch (Exception e) {
+            msg = e.getMessage();
+            success = false;
+        }
+        map.put("msg", msg);
+        map.put("success", success);
+
+        return map;
+
+    }
+
+    /**
+     * 获取用户openid 
+     * 先判断session是否存在，如果有则不必获取
+     * 如果没有则重新获取
+     * @param request
+     * @return
+     */
+    public String getOpenId(HttpServletRequest request) {
+        String openid = "";
+        if (request.getSession() != null) {
+            if (request.getSession().getAttribute("openid") != null) {
+                openid = request.getSession().getAttribute("openid").toString();
+            }
+        }
+        return openid;
+    }
+
+    /**
+     * Func获取列表数据
+     * 
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/list")
+    public QueryResult<WxHelp> list() {
+        QueryResult<WxHelp> rslt = wxHelpService.list();
+        return rslt;
+    }
+}

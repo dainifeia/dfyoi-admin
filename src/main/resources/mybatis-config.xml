@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<!-- 设置别名 -->
+	<!-- <typeAliases> 别名就是简单类名（默认是类名，首字母小写，比如User类的别名就是user） <package name="com.dfyoi.admin.pojo" 
+		/> <typeAlias type="com.beauxie.domain.User" alias="user"/> </typeAliases> -->
+	<typeAliases>
+		<typeAlias type="com.dfyoi.admin.pojo.SysDept" alias="SysDept" />
+		<typeAlias type="com.dfyoi.admin.pojo.SysRole" alias="SysRole" />
+		<typeAlias type="com.dfyoi.admin.pojo.SysPower" alias="SysPower" />
+		<typeAlias type="com.dfyoi.admin.pojo.SysRolePower" alias="SysRolePower" />
+		<typeAlias type="com.dfyoi.admin.pojo.SysPerson" alias="SysPerson" />
+		<typeAlias type="com.dfyoi.admin.pojo.SysUser" alias="SysUser" />
+		<typeAlias type="com.dfyoi.admin.pojo.SysFile" alias="SysFile" />
+		<typeAlias type="com.dfyoi.admin.pojo.SysDict" alias="SysDict" />
+		
+		<typeAlias type="com.dfyoi.web.pojo.WebNews" alias="WebNews" />
+		<typeAlias type="com.dfyoi.web.pojo.WebFriendLink" alias="WebFriendLink" />
+		
+		
+	</typeAliases>
+	<plugins>
+		<!-- com.github.pagehelper为PageHelper类所在包名 -->
+		<plugin interceptor="com.github.pagehelper.PageInterceptor">
+		</plugin>
+	</plugins>
+</configuration>

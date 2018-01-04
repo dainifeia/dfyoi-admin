@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	<!-- shiro start -->
+	<bean id="sessionDAO" class="org.apache.shiro.session.mgt.eis.MemorySessionDAO"></bean>
+	<bean id="sessionIdCookie" class="org.apache.shiro.web.servlet.SimpleCookie">
+		<constructor-arg name="name" value="SHRIOSESSIONID" />
+	</bean>
+	<!-- 配置shiro session 的一个管理器 -->
+	<bean id="sessionManager"
+		class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager">
+		<property name="sessionDAO" ref="sessionDAO"></property>
+	</bean>
+	<bean id="credentialsMatcher"
+		class="com.dfyoi.platform.shiro.RetryLimitHashedCredentialsMatcher">
+		<constructor-arg ref="cacheManager" />
+		<property name="hashAlgorithmName" value="md5" />
+		<property name="hashIterations" value="3" />
+		<property name="storedCredentialsHexEncoded" value="true" />
+	</bean>
+	<!-- 1. 配置SecurityManager -->
+	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+		<!-- <property name="cacheManager" ref="cacheManager" /> -->
+		<property name="sessionManager" ref="sessionManager"></property>
+		<!-- <property name="authenticator" ref="authenticator"></property> -->
+		<property name="realms">
+			<list>
+				<ref bean="AdminUserRealm" />
+			</list>
+		</property>
+	</bean>
+
+	<!-- 2. 配置CacheManager -->
+<bean id="cacheManager" class="org.apache.shiro.cache.ehcache.EhCacheManager">
+		<property name="cacheManagerConfigFile" value="classpath:shiro-ehcache.xml" />
+	</bean>
+
+	<!-- 3. 配置Realm -->
+	<bean id="AdminUserRealm" class="com.dfyoi.platform.shiro.AdminUserRealm">
+		<!-- 配置密码匹配器 -->
+		<property name="credentialsMatcher" ref="credentialsMatcher" />
+		<property name="cachingEnabled" value="true" />
+		<property name="authenticationCachingEnabled" value="true" />
+		<property name="authenticationCacheName" value="authenticationCache" />
+		<property name="authorizationCachingEnabled" value="true" />
+		<property name="authorizationCacheName" value="authorizationCache" />
+		
+		<property name="userService" ref="userService" />
+		<property name="powerService" ref="powerService" />
+	</bean>
+	
+	<bean id="userService" class="com.dfyoi.admin.service.SysUserService"></bean>
+	<bean id="powerService" class="com.dfyoi.admin.service.SysPowerService"></bean>
+
+	<!-- 4. 配置LifecycleBeanPostProcessor，可以自定义地来调用配置在Spring IOC容器中shiro bean的生命周期方法 -->
+	<bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor" />
+
+	<!-- 5. 使能够在IOC容器中使用shiro的注解，但必须在配置了LifecycleBeanPostProcessor之后才可以使用 -->
+	<bean
+		class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"
+		depends-on="lifecycleBeanPostProcessor" />
+	<bean
+		class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+		<property name="securityManager" ref="securityManager" />
+	</bean>
+
+	<!-- 6. 配置ShiroFilter -->
+	<!-- 6.1 id必须和web.xml中配置的DelegatingFilterProxy的<filter-name>一致。 如果不一致，会抛出NoSuchBeanDefinitionException异常，因为shiro会在IOC容器中查找名称和<filter-name> 
+		值一致的filter bean -->
+	<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+		<property name="securityManager" ref="securityManager" />
+		<property name="loginUrl" value="/Home/Login" />
+		<property name="successUrl" value="/WEB-INF/user/index.jsp" />
+		<property name="unauthorizedUrl" value="/Home/Login" />
+
+		<!-- 配置哪些页面需要受保护，以及访问这些页面需要的权限 -->
+		<property name="filterChainDefinitions">
+			<value>
+				<!-- 第一次匹配优先的原则 -->
+				<!-- 登录 -->
+				/Home/Login = anon
+				<!-- 静态资源 -->
+				/jslib/** = anon
+				/locallib/** = anon
+				<!-- restfulApi写到这里 -->
+				/restful/** = anon
+				/** = authc
+			</value>
+		</property>
+	</bean>
+
+	<!-- 7. 配置ModularRealmAuthenticator，可以实现多Realm认证 -->
+	<!-- <bean id="authenticator" class="org.apache.shiro.authc.pam.ModularRealmAuthenticator">
+		配置认证策略，只要有一个Realm认证成功即可，并且返回所有认证成功信息
+		<property name="authenticationStrategy">
+			<bean class="org.apache.shiro.authc.pam.AtLeastOneSuccessfulStrategy"></bean>
+		</property>
+	</bean> -->
+	<!-- shiro end -->
+</beans>

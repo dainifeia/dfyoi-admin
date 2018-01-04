@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dfyoi.web.mapper.WebNewsMapper">
+	<resultMap id="BaseResultMap" type="WebNews">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="title" property="title" jdbcType="VARCHAR" />
+		<result column="sym" property="sym" jdbcType="VARCHAR" />
+		<result column="publishDate" property="publishDate" jdbcType="TIMESTAMP" />
+		<result column="createDate" property="createDate" jdbcType="TIMESTAMP" />
+		<result column="createPersonName" property="createPersonName"
+			jdbcType="VARCHAR" />
+		<result column="createUserName" property="createUserName"
+			jdbcType="VARCHAR" />
+		<result column="createDeptId" property="createDeptId" jdbcType="INTEGER" />
+		<result column="createDeptName" property="createDeptName"
+			jdbcType="VARCHAR" />
+		<result column="imgUrl" property="imgUrl" jdbcType="VARCHAR" />
+		<result column="imgPath" property="imgPath" jdbcType="VARCHAR" />
+		<result column="clickCount" property="clickCount" jdbcType="INTEGER" />
+		<result column="stts" property="stts" jdbcType="INTEGER" />
+	</resultMap>
+	<resultMap id="ResultMapWithBLOBs" type="WebNews" extends="BaseResultMap">
+		<result column="content" property="content" jdbcType="LONGVARCHAR" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, title,sym, publishDate, createDate, createPersonName, createUserName,
+		createDeptId, createDeptName,
+		imgUrl, imgPath, clickCount, stts
+	</sql>
+	<sql id="Blob_Column_List">
+		content
+	</sql>
+	<select id="getWebNewsById" resultMap="ResultMapWithBLOBs"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		,
+		<include refid="Blob_Column_List" />
+		from webnews
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<select id="getWebNewsBySym" resultMap="ResultMapWithBLOBs"
+		parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		,
+		<include refid="Blob_Column_List" />
+		from webnews
+		where sym = #{sym,jdbcType=VARCHAR}
+	</select>
+	<delete id="removeById" parameterType="java.lang.Integer">
+		delete from webnews
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="WebNews">
+		<selectKey resultType="java.lang.Integer" keyProperty="id"
+			order="AFTER">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		insert into webnews (title,sym, publishDate, createDate,
+		createPersonName, createUserName, createDeptId,
+		createDeptName, imgUrl, imgPath,
+		clickCount, content, stts)
+		values (#{title,jdbcType=VARCHAR},#{sym,jdbcType=VARCHAR},
+		#{publishDate,jdbcType=TIMESTAMP}, #{createDate,jdbcType=TIMESTAMP},
+		#{createPersonName,jdbcType=VARCHAR},
+		#{createUserName,jdbcType=VARCHAR}, #{createDeptId,jdbcType=INTEGER},
+		#{createDeptName,jdbcType=VARCHAR}, #{imgUrl,jdbcType=VARCHAR},
+		#{imgPath,jdbcType=VARCHAR},
+		#{clickCount,jdbcType=INTEGER}, #{content,jdbcType=LONGVARCHAR},
+		#{stts,jdbcType=INTEGER})
+	</insert>
+	<insert id="insertSelective" parameterType="WebNews">
+		<selectKey resultType="java.lang.Integer" keyProperty="id"
+			order="AFTER">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		insert into webnews
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="title != null">
+				title,
+			</if>
+			<if test="sym != null">
+				sym,
+			</if>
+			<if test="publishDate != null">
+				publishDate,
+			</if>
+			<if test="createDate != null">
+				createDate,
+			</if>
+			<if test="createPersonName != null">
+				createPersonName,
+			</if>
+			<if test="createUserName != null">
+				createUserName,
+			</if>
+			<if test="createDeptId != null">
+				createDeptId,
+			</if>
+			<if test="createDeptName != null">
+				createDeptName,
+			</if>
+			<if test="imgUrl != null">
+				imgUrl,
+			</if>
+			<if test="imgPath != null">
+				imgPath,
+			</if>
+			<if test="clickCount != null">
+				clickCount,
+			</if>
+			<if test="content != null">
+				content,
+			</if>
+			<if test="stts != null">
+				stts,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="title != null">
+				#{title,jdbcType=VARCHAR},
+			</if>
+			<if test="sym != null">
+				#{sym,jdbcType=VARCHAR},
+			</if>
+			<if test="publishDate != null">
+				#{publishDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createDate != null">
+				#{createDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createPersonName != null">
+				#{createPersonName,jdbcType=VARCHAR},
+			</if>
+			<if test="createUserName != null">
+				#{createUserName,jdbcType=VARCHAR},
+			</if>
+			<if test="createDeptId != null">
+				#{createDeptId,jdbcType=INTEGER},
+			</if>
+			<if test="createDeptName != null">
+				#{createDeptName,jdbcType=VARCHAR},
+			</if>
+			<if test="imgUrl != null">
+				#{imgUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="imgPath != null">
+				#{imgPath,jdbcType=VARCHAR},
+			</if>
+			<if test="clickCount != null">
+				#{clickCount,jdbcType=INTEGER},
+			</if>
+			<if test="content != null">
+				#{content,jdbcType=LONGVARCHAR},
+			</if>
+			<if test="stts != null">
+				#{stts,jdbcType=INTEGER},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="WebNews">
+		update webnews
+		<set>
+			<if test="title != null">
+				sym = #{title,jdbcType=VARCHAR},
+			</if>
+			<if test="sym != null">
+				sym = #{sym,jdbcType=VARCHAR},
+			</if>
+			<if test="publishDate != null">
+				publishDate = #{publishDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createDate != null">
+				createDate = #{createDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createPersonName != null">
+				createPersonName = #{createPersonName,jdbcType=VARCHAR},
+			</if>
+			<if test="createUserName != null">
+				createUserName = #{createUserName,jdbcType=VARCHAR},
+			</if>
+			<if test="createDeptId != null">
+				createDeptId = #{createDeptId,jdbcType=INTEGER},
+			</if>
+			<if test="createDeptName != null">
+				createDeptName = #{createDeptName,jdbcType=VARCHAR},
+			</if>
+			<if test="imgUrl != null">
+				imgUrl = #{imgUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="imgPath != null">
+				imgPath = #{imgPath,jdbcType=VARCHAR},
+			</if>
+			<if test="clickCount != null">
+				clickCount = #{clickCount,jdbcType=INTEGER},
+			</if>
+			<if test="content != null">
+				content = #{content,jdbcType=LONGVARCHAR},
+			</if>
+			<if test="stts != null">
+				stts = #{stts,jdbcType=INTEGER},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateById" parameterType="WebNews">
+		update webnews
+		set
+		title=#{title,jdbcType=VARCHAR},
+		sym = #{sym,jdbcType=VARCHAR},
+		publishDate = #{publishDate,jdbcType=TIMESTAMP},
+		createDate = #{createDate,jdbcType=TIMESTAMP},
+		createPersonName = #{createPersonName,jdbcType=VARCHAR},
+		createUserName = #{createUserName,jdbcType=VARCHAR},
+		createDeptId = #{createDeptId,jdbcType=INTEGER},
+		createDeptName = #{createDeptName,jdbcType=VARCHAR},
+		imgUrl = #{imgUrl,jdbcType=VARCHAR},
+		imgPath = #{imgPath,jdbcType=VARCHAR},
+		clickCount = #{clickCount,jdbcType=INTEGER},
+		content = #{content,jdbcType=LONGVARCHAR},
+		stts = #{stts,jdbcType=INTEGER}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<select id="listByPara" resultMap="BaseResultMap">
+		select * from webnews
+		<where>
+			<if test="title != null and title!=''">
+				title like concat(concat('%',#{title}),'%')
+			</if>
+			<if test="sym != null and sym!=''">
+				and sym = #{sym}
+			</if>
+		</where>
+		order by id
+	</select>
+</mapper>

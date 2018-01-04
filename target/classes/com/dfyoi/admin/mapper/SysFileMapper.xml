@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dfyoi.admin.mapper.SysFileMapper" >
+  <resultMap id="BaseResultMap" type="SysFile" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="flag" property="flag" jdbcType="VARCHAR" />
+    <result column="fileType" property="fileType" jdbcType="VARCHAR" />
+    <result column="fileSize" property="fileSize" jdbcType="INTEGER" />
+    <result column="fileUrl" property="fileUrl" jdbcType="VARCHAR" />
+    <result column="filePath" property="filePath" jdbcType="VARCHAR" />
+    <result column="createDate" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="parentId" property="parentId" jdbcType="INTEGER" />
+    <result column="personId" property="personId" jdbcType="INTEGER" />
+    <result column="personName" property="personName" jdbcType="VARCHAR" />
+  </resultMap>
+<sql id="Base_Column_List" >
+    id, title, flag, fileType, fileSize, fileUrl, filePath, createDate, parentId, personId, 
+    personName
+  </sql>
+  <select id="getFileById" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from sysfile
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="removeById" parameterType="java.lang.Integer" >
+    delete from sysfile
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="SysFile" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into sysfile (title, flag, fileType, 
+      fileSize, fileUrl, filePath, 
+      createDate, parentId, personId, 
+      personName)
+    values (#{title,jdbcType=VARCHAR}, #{flag,jdbcType=VARCHAR}, #{fileType,jdbcType=VARCHAR}, 
+      #{fileSize,jdbcType=INTEGER}, #{fileUrl,jdbcType=VARCHAR}, #{filePath,jdbcType=VARCHAR}, 
+      #{createDate,jdbcType=TIMESTAMP}, #{parentId,jdbcType=INTEGER}, #{personId,jdbcType=INTEGER}, 
+      #{personName,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="SysFile" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into sysfile
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="title != null" >
+        title,
+      </if>
+      <if test="flag != null" >
+        flag,
+      </if>
+      <if test="fileType != null" >
+        fileType,
+      </if>
+      <if test="fileSize != null" >
+        fileSize,
+      </if>
+      <if test="fileUrl != null" >
+        fileUrl,
+      </if>
+      <if test="filePath != null" >
+        filePath,
+      </if>
+      <if test="createDate != null" >
+        createDate,
+      </if>
+      <if test="parentId != null" >
+        parentId,
+      </if>
+      <if test="personId != null" >
+        personId,
+      </if>
+      <if test="personName != null" >
+        personName,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="title != null" >
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="flag != null" >
+        #{flag,jdbcType=VARCHAR},
+      </if>
+      <if test="fileType != null" >
+        #{fileType,jdbcType=VARCHAR},
+      </if>
+      <if test="fileSize != null" >
+        #{fileSize,jdbcType=INTEGER},
+      </if>
+      <if test="fileUrl != null" >
+        #{fileUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="filePath != null" >
+        #{filePath,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null" >
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="parentId != null" >
+        #{parentId,jdbcType=INTEGER},
+      </if>
+      <if test="personId != null" >
+        #{personId,jdbcType=INTEGER},
+      </if>
+      <if test="personName != null" >
+        #{personName,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="SysFile" >
+    update sysfile
+    <set >
+      <if test="title != null" >
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="flag != null" >
+        flag = #{flag,jdbcType=VARCHAR},
+      </if>
+      <if test="fileType != null" >
+        fileType = #{fileType,jdbcType=VARCHAR},
+      </if>
+      <if test="fileSize != null" >
+        fileSize = #{fileSize,jdbcType=INTEGER},
+      </if>
+      <if test="fileUrl != null" >
+        fileUrl = #{fileUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="filePath != null" >
+        filePath = #{filePath,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null" >
+        createDate = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="parentId != null" >
+        parentId = #{parentId,jdbcType=INTEGER},
+      </if>
+      <if test="personId != null" >
+        personId = #{personId,jdbcType=INTEGER},
+      </if>
+      <if test="personName != null" >
+        personName = #{personName,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateById" parameterType="SysFile" >
+    update sysfile
+    set title = #{title,jdbcType=VARCHAR},
+      flag = #{flag,jdbcType=VARCHAR},
+      fileType = #{fileType,jdbcType=VARCHAR},
+      fileSize = #{fileSize,jdbcType=INTEGER},
+      fileUrl = #{fileUrl,jdbcType=VARCHAR},
+      filePath = #{filePath,jdbcType=VARCHAR},
+      createDate = #{createDate,jdbcType=TIMESTAMP},
+      parentId = #{parentId,jdbcType=INTEGER},
+      personId = #{personId,jdbcType=INTEGER},
+      personName = #{personName,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="listByPara" resultMap="BaseResultMap">
+		select * from SysFile
+		<where>
+            <if test="title != null and title!=''" >
+                title like concat(concat('%',#{title}),'%')
+            </if>
+            <if test="personId != null and personId!=0" >
+                and personId=#{personId}
+            </if>
+            <if test="flag != null and flag!=''" >
+                and flag=#{flag}
+            </if>
+             <if test="parentId != null" >
+                and parentId=#{parentId}
+            </if>
+         </where>
+	</select>
+</mapper>

@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dfyoi.admin.mapper.SysDictMapper">
+	<resultMap id="BaseResultMap" type="SysDict">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="text" property="text" jdbcType="VARCHAR" />
+		<result column="value" property="value" jdbcType="VARCHAR" />
+		<result column="sym" property="sym" jdbcType="VARCHAR" />
+		<result column="descr" property="descr" jdbcType="VARCHAR" />
+		<result column="orderNumber" property="orderNumber" jdbcType="INTEGER" />
+		<result column="lft" property="lft" jdbcType="INTEGER" />
+		<result column="rgt" property="rgt" jdbcType="INTEGER" />
+		<result column="level" property="level" jdbcType="INTEGER" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, text, value, sym, descr, orderNumber, lft, rgt, level
+	</sql>
+	<select id="getDictById" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from sysdict
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+		<select id="getDictBySym" resultMap="BaseResultMap" parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from sysdict
+		where sym = #{sym,jdbcType=VARCHAR}
+	</select>
+	<select id="getParentDict" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from sysdict
+		where <![CDATA[level = #{level,jdbcType=INTEGER} and lft<#{lft,jdbcType=INTEGER} and rgt>#{rgt,jdbcType=INTEGER}]]>
+	</select>
+	<select id="getDictMoveUp" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from sysdict
+		where <![CDATA[level = #{level,jdbcType=INTEGER} and lft<#{lft,jdbcType=INTEGER}]]>
+		and lft&gt;#{plft,jdbcType=INTEGER}
+		and rgt&lt;#{prgt,jdbcType=INTEGER}
+		order by lft desc limit 1
+	</select>
+	<select id="getDictMoveDown" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from sysdict
+		where <![CDATA[level = #{level,jdbcType=INTEGER} and lft>#{lft,jdbcType=INTEGER}]]>
+		and lft&gt;#{plft,jdbcType=INTEGER}
+		<if test="level ==0">
+			and rgt&gt;#{prgt,jdbcType=INTEGER}
+		</if>
+		<if test="level !=0">
+			and rgt&lt;#{prgt,jdbcType=INTEGER}
+		</if>
+		order by lft asc limit 1
+	</select>
+	<delete id="removeById" parameterType="java.lang.Integer">
+		delete from sysdict
+		where
+		id = #{id,jdbcType=INTEGER}
+	</delete>
+	<delete id="removeAndChild">
+		delete from sysdict where <![CDATA[lft>=#{lft,jdbcType=INTEGER} and rgt<=#{rgt,jdbcType=INTEGER}]]>;
+		update sysdict set
+		lft=lft-(#{rgt,jdbcType=INTEGER}-#{lft,jdbcType=INTEGER}+1) where <![CDATA[lft>#{lft,jdbcType=INTEGER}]]>;
+		update sysdict set
+		rgt=rgt-(#{rgt,jdbcType=INTEGER}-#{lft,jdbcType=INTEGER}+1) where <![CDATA[rgt>#{rgt,jdbcType=INTEGER}]]>;
+	</delete>
+	<update id="beforInsert">
+		update sysdict set rgt = rgt + 2 where <![CDATA[ rgt >= #{rgt,jdbcType=INTEGER} ]]>;
+		update sysdict set lft = lft + 2 where <![CDATA[ lft >= #{rgt,jdbcType=INTEGER} ]]>;
+	</update>
+	<insert id="insert" parameterType="SysDict">
+		insert into sysdict (text,
+		value, sym,
+		descr, orderNumber, lft,
+		rgt, level)
+		values
+		(#{text,jdbcType=VARCHAR}, #{value,jdbcType=VARCHAR},
+		#{sym,jdbcType=VARCHAR},
+		#{descr,jdbcType=VARCHAR},
+		#{orderNumber,jdbcType=INTEGER}, #{lft,jdbcType=INTEGER},
+		#{rgt,jdbcType=INTEGER}, #{level,jdbcType=INTEGER})
+	</insert>
+	<insert id="insertSelective" parameterType="SysDict">
+		<!-- <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" 
+			> SELECT LAST_INSERT_ID() </selectKey> -->
+		insert into sysdict
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="text != null">
+				text,
+			</if>
+			<if test="value != null">
+				value,
+			</if>
+			<if test="sym != null">
+				sym,
+			</if>
+			<if test="descr != null">
+				descr,
+			</if>
+			<if test="orderNumber != null">
+				orderNumber,
+			</if>
+			<if test="lft != null">
+				lft,
+			</if>
+			<if test="rgt != null">
+				rgt,
+			</if>
+			<if test="level != null">
+				level,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="text != null">
+				#{text,jdbcType=VARCHAR},
+			</if>
+			<if test="value != null">
+				#{value,jdbcType=VARCHAR},
+			</if>
+			<if test="sym != null">
+				#{sym,jdbcType=VARCHAR},
+			</if>
+			<if test="descr != null">
+				#{descr,jdbcType=VARCHAR},
+			</if>
+			<if test="orderNumber != null">
+				#{orderNumber,jdbcType=INTEGER},
+			</if>
+			<if test="lft != null">
+				#{lft,jdbcType=INTEGER},
+			</if>
+			<if test="rgt != null">
+				#{rgt,jdbcType=INTEGER},
+			</if>
+			<if test="level != null">
+				#{level,jdbcType=INTEGER},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="SysDict">
+		update sysdict
+		<set>
+			<if test="text != null">
+				text = #{text,jdbcType=VARCHAR},
+			</if>
+			<if test="value != null">
+				value = #{value,jdbcType=VARCHAR},
+			</if>
+			<if test="sym != null">
+				sym = #{sym,jdbcType=VARCHAR},
+			</if>
+			<if test="descr != null">
+				descr = #{descr,jdbcType=VARCHAR},
+			</if>
+			<if test="orderNumber != null">
+				orderNumber = #{orderNumber,jdbcType=INTEGER},
+			</if>
+			<if test="lft != null">
+				lft = #{lft,jdbcType=INTEGER},
+			</if>
+			<if test="rgt != null">
+				rgt = #{rgt,jdbcType=INTEGER},
+			</if>
+			<if test="level != null">
+				level = #{level,jdbcType=INTEGER},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateById" parameterType="SysDict">
+		update sysdict
+		set text =
+		#{text,jdbcType=VARCHAR},
+		value = #{value,jdbcType=VARCHAR},
+		sym =
+		#{sym,jdbcType=VARCHAR},
+		descr = #{descr,jdbcType=VARCHAR},
+		orderNumber
+		= #{orderNumber,jdbcType=INTEGER},
+		lft = #{lft,jdbcType=INTEGER},
+		rgt =
+		#{rgt,jdbcType=INTEGER},
+		level = #{level,jdbcType=INTEGER}
+		where id =
+		#{id,jdbcType=INTEGER}
+	</update>
+	<select id="listDescendant" resultMap="BaseResultMap">
+		select * from sysdict where
+		<![CDATA[ lft> #{lft,jdbcType=INTEGER} and rgt< #{rgt,jdbcType=INTEGER} order by
+		lft]]>
+	</select>
+	<select id="listAll" resultMap="BaseResultMap">
+		select * from sysdict order by
+		lft
+	</select>
+	<select id="getMaxRgt" resultType="java.lang.Integer">
+		select max(rgt) from sysdict
+	</select>
+	<select id="listChildren" resultMap="BaseResultMap">
+		select * from sysdict where
+		<![CDATA[ lft> #{lft,jdbcType=INTEGER} and rgt< #{rgt,jdbcType=INTEGER} and level=#{level,jdbcType=INTEGER}+1 order by
+		lft]]>
+	</select>
+</mapper>

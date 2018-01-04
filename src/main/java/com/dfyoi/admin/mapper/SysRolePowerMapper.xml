@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dfyoi.admin.mapper.SysRolePowerMapper" >
+  <resultMap id="BaseResultMap" type="SysRolePower" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="powerSym" property="powerSym" jdbcType="VARCHAR" />
+    <result column="roleSym" property="roleSym" jdbcType="VARCHAR" />
+    <result column="powerName" property="powerName" jdbcType="VARCHAR" />
+    <result column="roleName" property="roleName" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, powerSym, roleSym, powerName, roleName
+  </sql>
+  <delete id="removeById" parameterType="java.lang.Integer" >
+    delete from sysrolepower
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="SysRolePower" >
+    insert into sysrolepower (id, powerSym, roleSym, 
+      powerName, roleName)
+    values (#{id,jdbcType=INTEGER}, #{powerSym,jdbcType=VARCHAR}, #{roleSym,jdbcType=VARCHAR}, 
+      #{powerName,jdbcType=VARCHAR}, #{roleName,jdbcType=VARCHAR})
+  </insert>
+  <delete id="removeByPowerSym" parameterType="java.lang.String" >
+    delete from sysrolepower
+    where powerSym = #{powerSym,jdbcType=VARCHAR}
+  </delete>
+  <delete id="removeByRoleSym" parameterType="java.lang.String" >
+    delete from sysrolepower
+    where roleSym = #{roleSym,jdbcType=VARCHAR}
+  </delete>
+  <delete id="removeByRoleAndPowerSym">
+    delete from sysrolepower
+    where roleSym = #{roleSym,jdbcType=VARCHAR}
+  </delete>
+  <select id="listByRoleSym" resultMap="BaseResultMap">
+		select * from sysrolepower where roleSym = #{roleSym,jdbcType=VARCHAR} order by id desc
+	</select>
+</mapper>
