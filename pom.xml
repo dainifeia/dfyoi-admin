@@ -43,12 +43,14 @@
 		<shiro.version>1.3.2</shiro.version>
 		<!--shiro 包 -->
 		<freemarker.version>2.3.27-incubating</freemarker.version>
+		<!-- websocket -->
+		<websocket.version>1.3.7</websocket.version>
 		<commons-lang3.version>3.7</commons-lang3.version>
 		<zxing.version>3.3.1</zxing.version>
 		<jsonlib.version>2.4</jsonlib.version>
 		<gson.version>2.8.2</gson.version>
 		<httpclient.version>4.5.4</httpclient.version>
-		<developer.organization><![CDATA[北京盛世政通软件发展有限公司]]></developer.organization>
+		<developer.organization><![CDATA[不忘初心，方得始终]]></developer.organization>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -322,10 +324,9 @@
 			<version>${shiro.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>javax.websocket</groupId>
-			<artifactId>javax.websocket-api</artifactId>
-			<version>1.1</version>
-			<scope>provided</scope>
+			<groupId>org.java-websocket</groupId>
+			<artifactId>Java-WebSocket</artifactId>
+			<version>${websocket.version}</version>
 		</dependency>
 	</dependencies>
 	<build>
