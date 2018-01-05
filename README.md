@@ -4,14 +4,18 @@ spirng+springmvc+mybatis+shiro+maven+mysql搭建的通用后台管理系统，�
 使用到的框架有：Jquery、jqgrid、ztree、layer、adminlte、ueditor
 
 ## 功能： 
+1、通用FTP上传工具  
 
-1、ueditor可配置是否上传到FTP   
+2、ueditor可配置是否上传到FTP   
 
-2、用户在一处登陆后其他地方的登录用户会自动下线  
+3、用户在一处登陆后其他地方的登录用户会自动下线  
 
-3、freemarker生成HTML通用方法  
+4、freemarker生成HTML通用方法  
 
-4、通用新闻管理模版  
+5、通用新闻管理模版  
 
-5、通用友情链链接管理模版  
+6、通用友情链链接管理模版  
 
+7、socket服务端随tomcat启动  
+
+8、微信公众号开发辅助工具类
