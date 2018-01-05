@@ -1,7 +1,7 @@
 # dfyoi-admin
 spirng+springmvc+mybatis+shiro+maven+mysql搭建的通用后台管理系统，包括机构管理、人员管理、用户管理、功能权限管理、数据字典等。
 
-使用到的框架有：Jquery、jqgrid、ztree、layer、adminlte、ueditor
+使用到的前端框架或工具有：Jquery、jqgrid、ztree、layer、adminlte、ueditor
 
 ## 功能： 
 1、通用FTP上传工具  
