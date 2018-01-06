@@ -18,4 +18,6 @@ spirng+springmvc+mybatis+shiro+maven+mysql搭建的通用后台管理系统，�
 
 7、socket服务端随tomcat启动  
 
-8、微信公众号开发辅助工具类
+8、微信公众号开发辅助工具类  
+
+### 使用过程中若发现不足之处或bug还请指正。
