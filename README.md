@@ -20,4 +20,4 @@ spirng+springmvc+mybatis+shiro+maven+mysql搭建的通用后台管理系统，�
 
 8、微信公众号开发辅助工具类  
 
-### 使用过程中若发现不足之处或bug还请指正。
+### 使用过程中若发现不足之处或bug还请指正。(QQ:191728357)
