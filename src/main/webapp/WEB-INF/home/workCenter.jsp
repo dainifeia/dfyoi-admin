@@ -372,8 +372,8 @@ desired effect
 		<div class="control-sidebar-bg"></div>
 		<div id="aboutUs"
 			style="display: none; padding: 20px; line-height: 22px; background-color: #393D49; color: #fff; font-weight: 300;">
-			公司名称：北京盛世政通软件发展有限公司 <br>官方网站：www.bjsszt.cn <br>服务电话：400-900-5886
-			<br>公司地址：北京市海淀区上地十街1号院6号楼4层449室
+			公司名称：北京XXXX软件发展有限公司 <br>官方网站：www.dfyoi.com <br>服务电话：400-500-6000
+			<br>公司地址：北京市海淀区上地十街0号院1号楼1层101室
 
 		</div>
 		<div id="modifyPwd" style="margin-right: 30px; display: none">
