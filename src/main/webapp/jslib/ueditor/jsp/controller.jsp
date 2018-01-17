@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-	import="com.dfyoi.ueditor.ActionEnter"
+	import="com.dfyoi.platform.ueditor.ActionEnter"
     pageEncoding="UTF-8"%>
 <%@ page trimDirectiveWhitespaces="true" %>
 <%
